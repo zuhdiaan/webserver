@@ -7,15 +7,21 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header>
-    <h1>Jiwani Coffee</h1>
-    <nav>
+  <div class="container">
+    <header>
+      <h1>Jiwani Coffee</h1>
+      <nav>
+        <ul>
+          <!-- Leave this empty for now -->
+        </ul>
+      </nav>
+    </header>
+    <div class="sidebar">
       <ul>
         <li><a href="index.php">Home</a></li>
         <li><a href="menus.php">Menu</a></li>
         <li><a href="orders.php">Orders</a></li>
         <li><a href="add_menu.php">Add Menu</a></li>
       </ul>
-    </nav>
-  </header>
-  <main>
+    </div>
+    <main>
