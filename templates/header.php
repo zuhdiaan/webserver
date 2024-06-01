@@ -1,27 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+<header>
+  <h1>Jiwani Coffee</h1>
+  <nav>
+    <ul>
+      <?php
+      // PHP code to dynamically generate navigation links
+      $navLinks = array("Home" => "index.php", "Menu" => "menus.php", "Orders" => "orders.php", "Add Menu" => "add_menu.php");
+      foreach ($navLinks as $label => $link) {
+        echo "<li><a href='$link'>$label</a></li>";
+      }
+      ?>
+    </ul>
+  </nav>
+</header>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jiwani Coffee Server</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Jiwani Coffee</h1>
-      <nav>
-        <ul>
-          <!-- Leave this empty for now -->
-        </ul>
-      </nav>
-    </header>
-    <div class="sidebar">
-      <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="menus.php">Menu</a></li>
-        <li><a href="orders.php">Orders</a></li>
-        <li><a href="add_menu.php">Add Menu</a></li>
-      </ul>
-    </div>
-    <main>

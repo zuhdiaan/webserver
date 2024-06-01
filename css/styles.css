@@ -8,7 +8,7 @@ body {
   .container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    /* min-height: 100vh; */
   }
   
   header {
@@ -97,7 +97,10 @@ body {
     color: white;
     text-align: center;
     padding: 10px 0;
-    margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
   
   @media (max-width: 768px) {
