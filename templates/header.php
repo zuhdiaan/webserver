@@ -4,7 +4,7 @@
     <ul>
       <?php
       // PHP code to dynamically generate navigation links
-      $navLinks = array("Home" => "index.php", "Menu" => "menus.php", "Orders" => "orders.php", "Add Menu" => "add_menu.php");
+      $navLinks = array("Home" => "index.php", "Orders" => "orders.php", "Menu" => "menus.php", "Add Menu" => "add_menu.php");
       foreach ($navLinks as $label => $link) {
         echo "<li><a href='$link'>$label</a></li>";
       }
