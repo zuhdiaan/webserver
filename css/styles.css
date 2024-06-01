@@ -111,5 +111,72 @@ body {
     .sidebar {
       width: 100%;
     }
+
+    .add-menu-form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    
+    .add-menu-form label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    
+    .add-menu-form input,
+    .add-menu-form select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    
+    .add-menu-form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #19301B;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .add-menu-form button:hover {
+      background-color: #145E32;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      font-size: 18px;
   }
+  
+  .submit-button {
+      width: 100%;
+      background-color: #19301B;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+  }
+  
+  .submit-button:hover {
+      background-color: #555;
+  }
+}
   
