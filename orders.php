@@ -1,30 +1,24 @@
 <?php include 'templates/header.php'; ?>
 
-<h2>Orders</h2>
+<h2>Transactions</h2>
 <table>
   <thead>
     <tr>
       <th>ID</th>
-      <th>Menu ID</th>
-      <th>Table Number</th>
-      <th>Payment Status</th>
-      <th>Payment Method</th>
-      <th>Timestamp</th>
+      <th>Order ID</th>
+      <th>Transaction Token</th>
     </tr>
   </thead>
   <tbody>
     <?php
-    $json = file_get_contents('http://localhost:3000/api/orders');
-    $orders = json_decode($json, true);
+    $json = file_get_contents('http://localhost:3000/api/transaction');
+    $transactions = json_decode($json, true);
 
-    foreach ($orders as $order) {
+    foreach ($transactions as $transaction) {
       echo "<tr>
-              <td>{$order['id']}</td>
-              <td>{$order['menu_id']}</td>
-              <td>{$order['table_number']}</td>
-              <td>{$order['payment_status']}</td>
-              <td>{$order['payment_method']}</td>
-              <td>{$order['timestamp']}</td>
+              <td>{$transaction['id']}</td>
+              <td>{$transaction['order_id']}</td>
+              <td>{$transaction['transaction_token']}</td>
             </tr>";
     }
     ?>
