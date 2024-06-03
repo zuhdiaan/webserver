@@ -28,7 +28,7 @@
                   <td>" . htmlspecialchars($menu['id']) . "</td>
                   <td>" . htmlspecialchars($menu['name']) . "</td>
                   <td>" . htmlspecialchars($menu['price']) . "</td>
-                  <td><img src='" . htmlspecialchars($menu['image_source']) . "' alt='Menu Image' style='width: 140px; height: 140px;'></td>
+                  <td><img src='http://localhost:3000/uploads/" . htmlspecialchars($menu['image_source']) . "' alt='Menu Image' style='width: 140px; height: 140px; object-fit: cover;'></td>
                   <td>" . htmlspecialchars($menu['category']) . "</td>
                 </tr>";
               }
