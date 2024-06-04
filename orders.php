@@ -17,6 +17,12 @@
     $orders = json_decode($json, true);
 
     foreach ($orders as $order) {
+      $items = '';
+      foreach ($order['items'] as $item) {
+        $items .= "{$item['item_name']} x {$item['quantity']}, ";
+      }
+      $items = rtrim($items, ', ');
+      
       echo "<tr>
       <td>{$order['order_id']}</td>
       <td>{$order['transaction_token']}</td>
