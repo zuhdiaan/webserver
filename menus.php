@@ -7,7 +7,7 @@
       <th>ID</th>
       <th>Name</th>
       <th>Price</th>
-      <th>Image Source</th>
+      <th>Image</th>
       <th>Category</th>
     </tr>
   </thead>
