@@ -5,7 +5,7 @@
   <thead>
     <tr>
     <th>Order ID</th>
-      <th>Order Date</th>
+      <th>Order Time</th>
       <th>Items</th>
       <th>Total Price</th>
     </tr>
@@ -24,7 +24,7 @@
       
       echo "<tr>
       <td>{$order['order_id']}</td>
-      <td>{$order['order_date']}</td>
+      <td>{$order['order_time']}</td>
       <td>{$order['items']}</td>
       <td>{$order['total_price']}</td>
     </tr>";
