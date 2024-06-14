@@ -6,7 +6,9 @@
     <tr>
       <th>Order ID</th>
       <th>Order Time</th>
-      <th>Items</th>
+      <th>Item Name</th>
+      <th>Quantity</th>
+      <th>Item Price</th>
       <th>Total Price</th>
     </tr>
   </thead>
@@ -15,38 +17,72 @@
     $json = file_get_contents('http://localhost:3000/api/order');
     $orders = json_decode($json, true);
 
-    $merged_orders = [];
-    foreach ($orders as $order) {
-      $order_id = $order['order_id'];
-      if (!isset($merged_orders[$order_id])) {
-        $merged_orders[$order_id] = $order;
-      } else {
-        // Merge items if order_id already exists
-        $merged_orders[$order_id]['items'] .= ", " . $order['items'];
-        $merged_orders[$order_id]['total_price'] += $order['total_price'];
-      }
-    }
+    $prev_order_id = null;
+    $prev_order_time = null;
+    $total_price = 0;
 
-    foreach ($merged_orders as $order) {
-      $items = '';
-      $item_strings = explode(",", $order['items']);
-      foreach ($item_strings as $item_string) {
-        $item_parts = explode(":", $item_string);
+    foreach ($orders as $order) {
+      $items = explode(", ", $order['items']);
+      foreach ($items as $item) {
+        $item_parts = explode(":", $item);
         if (count($item_parts) === 4) {
           $item_name = $item_parts[1];
           $quantity = $item_parts[2];
           $item_price = $item_parts[3];
-          $items .= "{$item_name}: {$quantity} x {$item_price}, ";
+
+          if ($order['order_id'] !== $prev_order_id || $order['order_time'] !== $prev_order_time) {
+            // Display the total price for the previous order group
+            if ($prev_order_id !== null) {
+              echo "<tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>{$total_price}</td>
+                    </tr>";
+              $total_price = 0; // Reset total price for the new order group
+            }
+
+            // Display the order details for the new order group
+            echo "<tr>
+                    <td>{$order['order_id']}</td>
+                    <td>" . date('Y-m-d H:i:s', strtotime($order['order_time'])) . "</td>
+                    <td>{$item_name}</td>
+                    <td>{$quantity}</td>
+                    <td>{$item_price}</td>
+                    <td></td>
+                  </tr>";
+            $prev_order_id = $order['order_id'];
+            $prev_order_time = $order['order_time'];
+          } else {
+            // Display the item details for the same order group
+            echo "<tr>
+                    <td></td>
+                    <td></td>
+                    <td>{$item_name}</td>
+                    <td>{$quantity}</td>
+                    <td>{$item_price}</td>
+                    <td></td>
+                  </tr>";
+          }
+
+          // Accumulate the item prices for the total price calculation
+          $total_price += $quantity * $item_price;
         }
       }
-      $items = rtrim($items, ', ');
-      
+    }
+
+    // Display the total price for the last order group
+    if ($prev_order_id !== null) {
       echo "<tr>
-      <td>{$order['order_id']}</td>
-      <td>" . date('Y-m-d H:i:s', strtotime($order['order_time'])) . "</td>
-      <td>{$items}</td>
-      <td>{$order['total_price']}</td>
-    </tr>";
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>{$total_price}</td>
+            </tr>";
     }
     ?>
   </tbody>
