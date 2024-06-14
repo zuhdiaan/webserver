@@ -6,6 +6,7 @@
     <tr>
       <th>Order ID</th>
       <th>Order Time</th>
+      <th>User Name</th>
       <th>Item Name</th>
       <th>Quantity</th>
       <th>Item Price</th>
@@ -25,6 +26,7 @@
         $grouped_orders[$order_key] = [
           'order_id' => $order['order_id'],
           'order_time' => date('Y-m-d H:i:s', strtotime($order['order_time'])),
+          'user_name' => $order['user_name'], // Assuming the API response includes 'user_name'
           'items' => [],
           'total_price' => 0
         ];
@@ -51,6 +53,7 @@
       echo "<tr>
               <td>{$grouped_order['order_id']}</td>
               <td>{$grouped_order['order_time']}</td>
+              <td>{$grouped_order['user_name']}</td>
               <td>";
       foreach ($grouped_order['items'] as $item) {
         echo "{$item['name']}<br>";
@@ -63,10 +66,10 @@
       echo "</td>
             <td>";
       foreach ($grouped_order['items'] as $item) {
-        echo "{$item['price']}<br>";
+        echo "Rp. ".number_format($item['price'], 2)."<br>";
       }
       echo "</td>
-            <td>{$grouped_order['total_price']}</td>
+            <td>Rp. ".number_format($grouped_order['total_price'], 2)."</td>
             </tr>";
     }
     ?>
