@@ -49,6 +49,9 @@
       }
     }
 
+    // Sort the grouped_orders array in reverse order by keys
+    krsort($grouped_orders);
+
     foreach ($grouped_orders as $grouped_order) {
       echo "<tr>
               <td>{$grouped_order['order_id']}</td>
