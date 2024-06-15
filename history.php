@@ -1,6 +1,6 @@
 <?php include 'templates/header.php'; ?>
 
-<h2>Orders</h2>
+<h2>Order History</h2>
 <table>
   <thead>
     <tr>
@@ -11,12 +11,11 @@
       <th>Quantity</th>
       <th>Item Price</th>
       <th>Total Price</th>
-      <th>Action</th>
     </tr>
   </thead>
   <tbody>
     <?php
-    $json = file_get_contents('http://localhost:3000/api/order?status=pending');
+    $json = file_get_contents('http://localhost:3000/api/order?status=completed');
     $orders = json_decode($json, true);
 
     $grouped_orders = [];
@@ -71,36 +70,10 @@
       }
       echo "</td>
             <td>Rp. ".number_format($grouped_order['total_price'], 2)."</td>
-           <td><button onclick=\"updateOrderStatus('{$grouped_order['order_id']}', 'completed')\">Complete Order</button></td>
             </tr>";
     }
     ?>
   </tbody>
 </table>
-
-<script>
-function updateOrderStatus(orderId, status) {
-  fetch(`http://localhost:3000/api/updateOrderStatus`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ orderId: orderId, status: status })
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Response:', data); // Log the response for debugging
-    if (data.message === 'Order status updated successfully') {
-      window.location.reload(); // Reload the page to reflect the updated status
-    } else {
-      alert('Failed to update order status');
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Failed to update order status');
-  });
-}
-</script>
 
 <?php include 'templates/footer.php'; ?>
