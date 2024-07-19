@@ -5,11 +5,11 @@
     <main>
       <h2>Top Up Balance</h2>
       <form id="topUpForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
+        <label for="member_id">Member ID:</label>
+        <input type="number" id="member_id" name="member_id" required><br><br>
 
         <label for="amount">Top Up Amount:</label>
-        <input type="number" id="amount" name="amount" required><br><br>
+        <input type="number" id="amount" name="amount" step="0.01" required><br><br>
 
         <button type="submit">Top Up</button>
       </form>
@@ -21,14 +21,14 @@
 $(document).ready(function() {
   $('#topUpForm').submit(function(event) {
     event.preventDefault();
-    var username = $('#username').val();
+    var member_id = $('#member_id').val();
     var amount = $('#amount').val();
 
     $.ajax({
       url: 'http://localhost:3000/api/topup',
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ username: username, amount: amount }),
+      data: JSON.stringify({ member_id: member_id, amount: amount }),
       success: function(response) {
         $('#message').text('Balance updated successfully. New balance: ' + response.balance);
       },

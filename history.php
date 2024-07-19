@@ -5,9 +5,9 @@
   <thead>
     <tr>
       <th>Order ID</th>
-      <th>Order Time</th>
+      <th>Order Date</th>
       <th>User Name</th>
-      <th>Item Name</th>
+      <th>Items</th>
       <th>Quantity</th>
       <th>Item Price</th>
       <th>Total Price</th>
@@ -15,47 +15,45 @@
   </thead>
   <tbody>
     <?php
+    // Mengambil data pesanan dari API
     $json = file_get_contents('http://localhost:3000/api/order?status=completed');
     $orders = json_decode($json, true);
 
     $grouped_orders = [];
 
     foreach ($orders as $order) {
-      $order_key = $order['order_id'] . '_' . $order['order_time'];
+      // Mengelompokkan pesanan berdasarkan ID pesanan
+      $order_key = $order['order_id'];
       if (!isset($grouped_orders[$order_key])) {
         $grouped_orders[$order_key] = [
           'order_id' => $order['order_id'],
-          'order_time' => date('Y-m-d H:i:s', strtotime($order['order_time'])),
+          'order_date' => date('Y-m-d H:i:s', strtotime($order['order_date'])),
           'user_name' => $order['user_name'],
           'items' => [],
           'total_price' => 0
         ];
       }
 
-      $items = explode(",", $order['items']);
-      foreach ($items as $item) {
-        $item_parts = explode(":", $item);
-        if (count($item_parts) === 4) {
-          $item_name = $item_parts[1];
-          $quantity = $item_parts[2];
-          $item_price = $item_parts[3];
-          $grouped_orders[$order_key]['items'][] = [
-            'name' => $item_name,
-            'quantity' => $quantity,
-            'price' => $item_price
-          ];
-          $grouped_orders[$order_key]['total_price'] += $quantity * $item_price;
-        }
-      }
+      // Menambahkan item ke dalam kelompok pesanan
+      $item_name = $order['item_name'];
+      $quantity = $order['item_amount'];
+      $item_price = $order['item_price'];
+      
+      $grouped_orders[$order_key]['items'][] = [
+        'name' => $item_name,
+        'quantity' => $quantity,
+        'price' => $item_price
+      ];
+      $grouped_orders[$order_key]['total_price'] += $quantity * $item_price;
     }
 
-    // Sort the grouped_orders array in reverse order by keys
+    // Mengurutkan array grouped_orders berdasarkan kunci secara terbalik
     krsort($grouped_orders);
 
     foreach ($grouped_orders as $grouped_order) {
       echo "<tr>
               <td>{$grouped_order['order_id']}</td>
-              <td>{$grouped_order['order_time']}</td>
+              <td>{$grouped_order['order_date']}</td>
               <td>{$grouped_order['user_name']}</td>
               <td>";
       foreach ($grouped_order['items'] as $item) {
