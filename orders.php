@@ -77,7 +77,10 @@
             <td>{$grouped_order['payment_status']}</td>
             <td>{$grouped_order['table_number']}</td>
             <td>{$grouped_order['payment_method']}</td>
-            <td><button onclick=\"updateOrderStatus('{$grouped_order['order_id']}', 'completed')\">Complete Order</button></td>
+            <td>
+              <button onclick=\"updateOrderStatus('{$grouped_order['order_id']}', 'completed')\">Complete Order</button>
+              <button onclick=\"cancelOrder('{$grouped_order['order_id']}')\">Cancel Order</button>
+            </td>
             </tr>";
     }
     ?>
@@ -95,16 +98,25 @@ function updateOrderStatus(orderId, status) {
   })
   .then(response => response.json())
   .then(data => {
-    console.log('Response:', data); // Log the response for debugging
-    if (data.message === 'Order status updated successfully') {
-      window.location.reload(); // Reload the page to reflect the updated status
-    } else {
-      alert('Failed to update order status');
-    }
+    console.log('Response:', data);
+    // Optionally refresh the page or update the table
+    location.reload();
+  });
+}
+
+function cancelOrder(orderId) {
+  fetch('http://localhost:3000/api/cancelOrder', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ orderId: orderId })
   })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('Failed to update order status');
+  .then(response => response.json())
+  .then(data => {
+    console.log('Response:', data);
+    // Optionally refresh the page or update the table
+    location.reload();
   });
 }
 </script>
