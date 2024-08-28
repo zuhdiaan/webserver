@@ -23,65 +23,71 @@
     $json = file_get_contents('http://localhost:3000/api/order?status=pending');
     $orders = json_decode($json, true);
 
-    $grouped_orders = [];
+    if (is_array($orders) && !empty($orders)) {
+      $grouped_orders = [];
 
-    foreach ($orders as $order) {
-      $order_key = $order['order_id'];
-      if (!isset($grouped_orders[$order_key])) {
-        $grouped_orders[$order_key] = [
-          'order_id' => $order['order_id'],
-          'order_date' => date('Y-m-d H:i:s', strtotime($order['order_time'])),
-          'user_name' => $order['user_name'],
-          'items' => [],
-          'total_price' => 0,
-          'payment_status' => $order['payment_status'],
-          'table_number' => $order['table_number'],
-          'payment_method' => $order['payment_method']
-        ];
+      foreach ($orders as $order) {
+        $order_key = $order['order_id'];
+        
+        // Initialize the order details if not already present
+        if (!isset($grouped_orders[$order_key])) {
+          $grouped_orders[$order_key] = [
+            'order_id' => $order['order_id'],
+            'order_date' => !empty($order['order_time']) ? date('Y-m-d H:i:s', strtotime($order['order_time'])) : 'N/A',
+            'user_name' => $order['user_name'] ?? 'Unknown User',
+            'items' => [],
+            'total_price' => 0,
+            'payment_status' => $order['payment_status'] ?? 'Unknown',
+            'table_number' => $order['table_number'] ?? 'N/A',
+            'payment_method' => $order['payment_method'] ?? 'Unknown',
+          ];
+        }
+
+        $items = explode(',', $order['items']);
+        foreach ($items as $item) {
+          list($item_id, $item_name, $item_amount, $item_total_price) = explode(':', $item);
+
+          $grouped_orders[$order_key]['items'][] = [
+            'name' => $item_name ?? 'Unknown Item',
+            'quantity' => $item_amount ?? 0,
+            'total_price' => $item_total_price ?? 0
+          ];
+          $grouped_orders[$order_key]['total_price'] += $item_total_price ?? 0;
+        }
       }
 
-      $items = explode(',', $order['items']);
-      foreach ($items as $item) {
-        list($item_id, $item_name, $item_amount, $item_total_price) = explode(':', $item);
-
-        $grouped_orders[$order_key]['items'][] = [
-          'name' => $item_name,
-          'quantity' => $item_amount,
-          'total_price' => $item_total_price
-        ];
-        $grouped_orders[$order_key]['total_price'] += $item_total_price;
-      }
-    }
-
-    foreach ($grouped_orders as $grouped_order) {
-      echo "<tr>
-              <td>{$grouped_order['order_id']}</td>
-              <td>{$grouped_order['order_date']}</td>
-              <td>{$grouped_order['user_name']}</td>
+      foreach ($grouped_orders as $grouped_order) {
+        echo "<tr>
+                <td>{$grouped_order['order_id']}</td>
+                <td>{$grouped_order['order_date']}</td>
+                <td>{$grouped_order['user_name']}</td>
+                <td>";
+        foreach ($grouped_order['items'] as $item) {
+          echo "{$item['name']}<br>";
+        }
+        echo "</td>
               <td>";
-      foreach ($grouped_order['items'] as $item) {
-        echo "{$item['name']}<br>";
+        foreach ($grouped_order['items'] as $item) {
+          echo "{$item['quantity']}<br>";
+        }
+        echo "</td>
+              <td>";
+        foreach ($grouped_order['items'] as $item) {
+          echo "Rp. " . number_format($item['total_price'], 2) . "<br>";
+        }
+        echo "</td>
+              <td>Rp. " . number_format($grouped_order['total_price'], 2) . "</td>
+              <td>{$grouped_order['payment_status']}</td>
+              <td>{$grouped_order['table_number']}</td>
+              <td>{$grouped_order['payment_method']}</td>
+              <td>
+                <button onclick=\"updateOrderStatus('{$grouped_order['order_id']}', 'completed')\">Complete Order</button>
+                <button onclick=\"cancelOrder('{$grouped_order['order_id']}')\">Cancel Order</button>
+              </td>
+              </tr>";
       }
-      echo "</td>
-            <td>";
-      foreach ($grouped_order['items'] as $item) {
-        echo "{$item['quantity']}<br>";
-      }
-      echo "</td>
-            <td>";
-      foreach ($grouped_order['items'] as $item) {
-        echo "Rp. " . number_format($item['total_price'], 2) . "<br>";
-      }
-      echo "</td>
-            <td>Rp. " . number_format($grouped_order['total_price'], 2) . "</td>
-            <td>{$grouped_order['payment_status']}</td>
-            <td>{$grouped_order['table_number']}</td>
-            <td>{$grouped_order['payment_method']}</td>
-            <td>
-              <button onclick=\"updateOrderStatus('{$grouped_order['order_id']}', 'completed')\">Complete Order</button>
-              <button onclick=\"cancelOrder('{$grouped_order['order_id']}')\">Cancel Order</button>
-            </td>
-            </tr>";
+    } else {
+      echo "<tr><td colspan='11'>No pending orders found.</td></tr>";
     }
     ?>
   </tbody>
@@ -99,8 +105,7 @@ function updateOrderStatus(orderId, status) {
   .then(response => response.json())
   .then(data => {
     console.log('Response:', data);
-    // Optionally refresh the page or update the table
-    location.reload();
+    location.reload();  // Optionally refresh the page after update
   });
 }
 
@@ -115,8 +120,7 @@ function cancelOrder(orderId) {
   .then(response => response.json())
   .then(data => {
     console.log('Response:', data);
-    // Optionally refresh the page or update the table
-    location.reload();
+    location.reload();  // Optionally refresh the page after cancellation
   });
 }
 </script>
