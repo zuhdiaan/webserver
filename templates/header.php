@@ -16,16 +16,33 @@ if ($current_page === 'login.php') {
   <nav>
     <ul>
       <?php
-      // Dynamically generate navigation links
-      $navLinks = array(
-        "Home" => "index.php",
-        "Orders" => "orders.php",
-        "History" => "history.php",
-        "Menu" => "menus.php",
-        "Add Menu" => "add_menu.php",
-        "Top Up Balance" => "top_up.php"
-      );
+      // Initialize an empty array for navigation links
+      $navLinks = array();
 
+      // Get user role from session
+      $role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
+
+      // Define menu items based on user role
+      if ($role === 'admin') {
+          // Admin can see all options except Manage Users and Settings
+          $navLinks = array(
+              "Home" => "index.php",
+              "Orders" => "orders.php",
+              "History" => "history.php",
+              "Menu" => "menus.php",
+              "Add Menu" => "add_menu.php",
+              "Top Up Balance" => "top_up.php"
+          );
+      } elseif ($role === 'owner') {
+          // Owner can only see specific options
+          $navLinks = array(
+              "Home" => "index.php",
+              "History" => "history.php",
+              "Manage Users" => "manage_users.php"
+          );
+      }
+
+      // Render the navigation links
       foreach ($navLinks as $label => $link) {
         echo "<li><a href='$link'>$label</a></li>";
       }

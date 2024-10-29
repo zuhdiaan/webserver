@@ -13,30 +13,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Send request to the API backend for login
-    $url = 'http://localhost:3000/api/loginAdmin'; // Pastikan URL ini sesuai dengan backend Anda
+    $url = 'http://localhost:3000/api/loginAdmin'; // Ensure this URL matches your backend
 
-    // Data yang akan dikirim
+    // Data to be sent
     $data = array(
         'username' => $username,
         'password' => $password,
     );
 
-    // Inisialisasi cURL
+    // Initialize cURL
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
-    // Eksekusi cURL
+    // Execute cURL
     $response = curl_exec($ch);
     curl_close($ch);
 
-    // Tangani respons dari backend
+    // Handle the response from backend
     $result = json_decode($response, true);
 
     if (isset($result['success']) && $result['success']) {
-        // Simpan data sesi pada login yang berhasil
+        // Store session data on successful login
         $_SESSION['member_id'] = $result['member_id'];
         $_SESSION['role'] = $result['role'];
         header("Location: index.php"); // Redirect to dashboard

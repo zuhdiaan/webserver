@@ -13,6 +13,9 @@ if (isset($_GET['logout'])) {
     header("Location: login.php"); // Redirect ke halaman login
     exit();
 }
+
+// Ambil role dari sesi
+$role = $_SESSION['role'];
 ?>
 
 <?php include 'templates/header.php'; ?>
@@ -22,7 +25,19 @@ if (isset($_GET['logout'])) {
     <main>
       <h2>Welcome to Jiwani Coffee Web Server</h2>
       <p>Manage your cafe orders and menus.</p>
-      
+
+      <?php if ($role === 'admin'): ?>
+          <h3>Admin Dashboard</h3>
+          <p>Here you can manage users, view reports, and adjust settings.</p>
+          <!-- Add more admin-specific functionality here -->
+      <?php elseif ($role === 'owner'): ?>
+          <h3>Owner Dashboard</h3>
+          <p>Here you can view sales reports and manage the cafe's menu items.</p>
+          <!-- Add more owner-specific functionality here -->
+      <?php else: ?>
+          <p>Access denied. You do not have permission to view this page.</p>
+      <?php endif; ?>
+
       <!-- Logout Button -->
       <a href="?logout=true" class="btn btn-danger">Logout</a>
     </main>

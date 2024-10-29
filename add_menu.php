@@ -1,11 +1,23 @@
 <?php 
 require 'vendor/autoload.php';
 include 'templates/header.php';
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
+    // Redirect to the login page or show an error message
+    header("Location: login.php"); // Redirect to the login page
+    exit();
+}
 ?>
 
 <h2>Add New Menu</h2>

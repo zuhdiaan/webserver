@@ -1,6 +1,24 @@
-<?php include 'templates/header.php'; ?>
+<?php 
+session_start(); // Start the session
+
+// Check if the user is logged in
+if (!isset($_SESSION['member_id'])) {
+    header("Location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+include 'templates/header.php'; 
+?>
 
 <h2>Order History</h2>
+
+<?php
+// Check if the logged-in user is an owner
+if ($_SESSION['role'] === 'owner') {
+    echo '<button onclick="window.print()" style="margin-bottom: 20px;">Print</button>';
+}
+?>
+
 <table>
   <thead>
     <tr>
@@ -18,7 +36,7 @@
   </thead>
   <tbody>
     <?php
-    // Mengambil data pesanan dari API dengan status 'completed'
+    // Fetch completed orders from the API
     $json = file_get_contents('http://localhost:3000/api/order?status=completed');
     $orders = json_decode($json, true);
 
