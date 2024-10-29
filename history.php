@@ -15,7 +15,7 @@ include 'templates/header.php';
 <?php
 // Check if the logged-in user is an owner
 if ($_SESSION['role'] === 'owner') {
-    echo '<button onclick="window.print()" style="margin-bottom: 20px;">Print</button>';
+    echo '<button onclick="exportToExcel()" style="margin-bottom: 20px;">Export to Excel</button>';
 }
 ?>
 
@@ -99,5 +99,11 @@ if ($_SESSION['role'] === 'owner') {
     ?>
   </tbody>
 </table>
+
+<script>
+function exportToExcel() {
+    window.location.href = 'http://localhost:3000/api/exportOrders'; // Call the API to export to Excel
+}
+</script>
 
 <?php include 'templates/footer.php'; ?>
