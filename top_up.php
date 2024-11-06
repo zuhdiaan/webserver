@@ -39,7 +39,7 @@ $(document).ready(function() {
     var amount = $('#amount').val();
 
     $.ajax({
-      url: 'http://localhost:3000/api/topup',
+      url: 'http://localhost:3000/api/topupAdmin',
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ member_id: member_id, amount: amount }),
