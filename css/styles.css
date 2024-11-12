@@ -249,4 +249,68 @@ body {
       background-color: #555;
   }
 }
+/* styles.css */
+body2 {
+  background-color: #19301B;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container2 {
+  background-color: #2A4B34;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.container2 h2 {
+  margin-bottom: 20px;
+}
+
+.container2 input[type="text"],
+.container2 input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+}
+
+.container2 button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.container2 button:hover {
+  background-color: #45a049;
+}
+
+.container2 p {
+  margin-top: 20px;
+}
+
+.container2 a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.container2 a:hover {
+  text-decoration: underline;
+}
+
+.error_message2 {
+  color: red;
+}
+
   

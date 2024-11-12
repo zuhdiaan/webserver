@@ -50,19 +50,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 include 'templates/header.php';
 ?>
 
-<h2>Login</h2>
-<form action="login.php" method="POST">
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Login</button>
-    <?php if (isset($error_message)): ?>
-        <p style="color: red;"><?php echo $error_message; ?></p>
-    <?php endif; ?>
-</form>
+<link rel="stylesheet" type="text/css" href="css/styles.css">
 
-<!-- Registration and Forgot Password Links -->
-<p>Belum memiliki akun? <a href="register.php">Daftar Sekarang</a></p>
-<p>Lupa password? <a href="forgot_password.php">Klik di sini</a></p>
+<body2>
+    <div class="container2">
+        <h2>Login</h2>
+        <form action="login.php" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <?php if (isset($error_message)): ?>
+                <p class="error_message2"><?php echo $error_message; ?></p>
+            <?php endif; ?>
+        </form>
+
+        <!-- Registration and Forgot Password Links -->
+        <p>Belum memiliki akun? <a href="register.php">Daftar Sekarang</a></p>
+        <p>Lupa password? <a href="forgot_password.php">Klik di sini</a></p>
+    </div>
+</body2>
 
 <?php
 include 'templates/footer.php';
