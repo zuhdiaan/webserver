@@ -38,7 +38,8 @@ if ($current_page === 'login.php') {
           $navLinks = array(
               "Home" => "index.php",
               "History" => "history.php",
-              "Manage Users" => "manage_users.php"
+              "Register" => "register.php",
+              "Manage Users" => "manage_users.php",
           );
       }
 

@@ -64,9 +64,7 @@ include 'templates/header.php';
             <?php endif; ?>
         </form>
 
-        <!-- Registration and Forgot Password Links -->
-        <p>Belum memiliki akun? <a href="register.php">Daftar Sekarang</a></p>
-        <p>Lupa password? <a href="forgot_password.php">Klik di sini</a></p>
+        <!-- <p>Lupa password? <a href="forgot_password.php">Klik di sini</a></p> -->
     </div>
 </body2>
 

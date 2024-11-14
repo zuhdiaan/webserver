@@ -1,6 +1,8 @@
 <?php
 session_start(); // Mulai sesi
-
+if (isset($_GET['register_success'])) {
+  echo "<script>alert('Pendaftaran berhasil!');</script>";
+}
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['member_id'])) {
     header("Location: login.php"); // Redirect ke halaman login
@@ -27,7 +29,7 @@ $role = $_SESSION['role'];
       <p>Manage your cafe orders and menus.</p>
 
       <?php if ($role === 'admin'): ?>
-          <h3>Admin Dashboard</h3>
+          <h3>Barista Dashboard</h3>
           <p>Here you can manage users, view reports, and adjust settings.</p>
           <!-- Add more admin-specific functionality here -->
       <?php elseif ($role === 'owner'): ?>

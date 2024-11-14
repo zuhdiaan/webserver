@@ -4,7 +4,6 @@ include 'templates/header.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 
 // Start session if not already started
@@ -14,14 +13,13 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Check if the user is logged in and is an admin
 if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
-    // Redirect to the login page or show an error message
-    header("Location: login.php"); // Redirect to the login page
+    header("Location: login.php");
     exit();
 }
 ?>
 
 <h2>Add New Menu</h2>
-<form action="add_menu.php" method="post" enctype="multipart/form-data" class="add-menu-form">
+<form action="add_menu.php" method="post" enctype="multipart/form-data" class="add-menu-form" onsubmit="return validateForm()">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required class="input-field">
     
@@ -31,7 +29,6 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
     <label for="category">Category:</label>
     <select id="category" name="category" required class="input-field">
         <?php
-        // Menampilkan daftar kategori dari database
         $client = new Client();
         try {
             $response = $client->get('http://localhost:3000/api/categories');
@@ -53,12 +50,32 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
     <button type="submit" class="submit-button">Add Menu</button>
 </form>
 
+<script>
+    function showAlert(message) {
+        alert(message);
+    }
+
+    function validateForm() {
+        const avatar = document.getElementById('avatar');
+        if (!avatar.value) {
+            showAlert('Please upload an image.');
+            return false;
+        }
+        return true;
+    }
+</script>
+
 <?php   
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $price = $_POST['price'];
     $category = $_POST['category'];
     $image_source = $_FILES['avatar'];
+
+    if (!$image_source['tmp_name']) {
+        echo "<script>showAlert('Image upload failed. Please try again.');</script>";
+        exit();
+    }
 
     $client = new Client();
 
@@ -88,14 +105,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $response = $client->post('http://localhost:3000/api/menu_items', $options);
 
         if ($response->getStatusCode() == 200) {
-            echo "<p>Menu added successfully.</p>";
+            echo "<script>showAlert('Menu added successfully!');</script>";
         } else {
-            echo "<p>Failed to add menu. Status code: " . $response->getStatusCode() . "</p>";
+            echo "<script>showAlert('Failed to add menu. Status code: " . $response->getStatusCode() . "');</script>";
         }
     } catch (RequestException $e) {
-        echo "<p>Failed to add menu. Error: " . htmlspecialchars($e->getMessage()) . "</p>";
+        $responseBody = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : '';
+        if (strpos($responseBody, 'Menu item with the same name already exists') !== false) {
+            echo "<script>showAlert('Menu item with the same name already exists.');</script>";
+        } else {
+            echo "<script>showAlert('Failed to add menu. Error: " . htmlspecialchars($e->getMessage()) . "');</script>";
+        }
     } catch (Exception $e) {
-        echo "<p>Failed to add menu. Error: " . htmlspecialchars($e->getMessage()) . "</p>";
+        echo "<script>showAlert('Failed to add menu. Error: " . htmlspecialchars($e->getMessage()) . "');</script>";
     }
 }
 ?>

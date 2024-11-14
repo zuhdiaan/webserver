@@ -165,32 +165,33 @@ document.querySelectorAll('.edit-menu').forEach(button => {
   closeModal();
 });
 
-    // Handle Delete Button Click
-    document.querySelectorAll('.delete-menu').forEach(button => {
-      button.addEventListener('click', () => {
-        const itemId = button.getAttribute('data-id');
-        if (confirm('Are you sure you want to delete this menu item?')) {
-          fetch(`http://localhost:3000/api/menu_items/${itemId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`Failed to delete item with ID ${itemId}`);
-            }
-            return response.json();
-          })
-          .then(data => {
-            alert(data.message || 'Menu item deleted successfully');
-            location.reload();
-          })
-          .catch(error => {
-            console.error('Error deleting menu item:', error);
-            alert('Failed to delete menu item. Please try again.');
-          });
+// Handle Delete Button Click
+document.querySelectorAll('.delete-menu').forEach(button => {
+  button.addEventListener('click', () => {
+    const itemId = button.getAttribute('data-id');
+    if (confirm('Are you sure you want to delete this menu item?')) {
+      fetch(`http://localhost:3000/api/menu_items/${itemId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to delete item with ID ${itemId}`);
         }
+        // Try to parse the response if there is a body, otherwise return an empty object
+        return response.json().catch(() => ({}));
+      })
+      .then(data => {
+        alert(data.message || 'Menu item deleted successfully');
+        location.reload();
+      })
+      .catch(error => {
+        console.error('Error deleting menu item:', error);
+        alert('Failed to delete menu item. Please try again.');
       });
-    });
+    }
+  });
+});
 
     // Handle Update Button Click for Availability
     document.querySelectorAll('.update-availability').forEach(button => {

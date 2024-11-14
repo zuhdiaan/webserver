@@ -32,21 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Handle response from the backend
     $result = json_decode($response, true);
-
     if (isset($result['success']) && $result['success']) {
         // Registration successful
-        header("Location: login.php"); // Redirect to login page
+        header("Location: index.php?register_success=1"); // Tambahkan query parameter
         exit();
     } else {
         $error_message = $result['message'] ?? "Registration failed."; // Get error message from API
     }
 }
-
 // Include header
 include 'templates/header.php';
 ?>
 
-<h2>Register</h2>
+<h2>Register Barista</h2>
 <form action="register.php" method="POST">
     <input type="text" name="name" placeholder="Full Name" required> <!-- Name input -->
     <input type="email" name="email" placeholder="Email" required> <!-- Email input -->
