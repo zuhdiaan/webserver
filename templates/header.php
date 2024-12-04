@@ -14,7 +14,7 @@ if ($current_page === 'login.php') {
 <header>
   <h1>Jiwani Coffee</h1>
   <nav>
-    <ul>
+    <ul class="nav-links">
       <?php
       // Initialize an empty array for navigation links
       $navLinks = array();
@@ -49,6 +49,9 @@ if ($current_page === 'login.php') {
       }
       ?>
     </ul>
+
+    <a href="?logout=true" class="btn btn-danger logout-btn">Logout</a>
+
   </nav>
 </header>
 

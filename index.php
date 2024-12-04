@@ -40,8 +40,6 @@ $role = $_SESSION['role'];
           <p>Access denied. You do not have permission to view this page.</p>
       <?php endif; ?>
 
-      <!-- Logout Button -->
-      <a href="?logout=true" class="btn btn-danger">Logout</a>
     </main>
   </div>
 </body>
