@@ -45,7 +45,8 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
     </select>
     
     <label for="avatar">Image source:</label>
-    <input type="file" id="avatar" name="avatar" class="input-field">
+    <input type="file" id="avatar" name="avatar" class="input-field" accept="image/*">
+
     
     <button type="submit" class="submit-button">Add Menu</button>
 </form>
