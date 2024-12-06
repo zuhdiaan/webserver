@@ -18,6 +18,10 @@ if ($_SESSION['role'] === 'owner') {
     echo '<button onclick="exportToExcel()" style="margin-bottom: 20px;">Export to Excel</button>';
 }
 
+// Get filter and search parameters
+$filter_status = isset($_GET['filter_status']) ? $_GET['filter_status'] : '';
+$search_query = isset($_GET['search_query']) ? $_GET['search_query'] : '';
+
 // Pagination setup
 $items_per_page = 10; // Number of items per page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page number
@@ -26,6 +30,18 @@ $start_index = ($page - 1) * $items_per_page; // Calculate start index for the p
 // Fetch completed orders from the API
 $json = file_get_contents('http://localhost:3000/api/order?status=completed');
 $orders = json_decode($json, true);
+
+// Apply filter and search
+if ($filter_status) {
+    $orders = array_filter($orders, function($order) use ($filter_status) {
+        return $order['payment_status'] === $filter_status;
+    });
+}
+if ($search_query) {
+    $orders = array_filter($orders, function($order) use ($search_query) {
+        return stripos($order['user_name'], $search_query) !== false || stripos($order['order_id'], $search_query) !== false;
+    });
+}
 
 // Group orders
 $grouped_orders = [];
@@ -66,6 +82,21 @@ $total_pages = ceil($total_orders / $items_per_page);
 $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
 
 ?>
+
+<!-- Filter and Search Form -->
+<form method="GET" style="margin-bottom: 20px;">
+    <label for="filter_status">Filter by Payment Status:</label>
+    <select name="filter_status" id="filter_status">
+        <option value="">All</option>
+        <option value="paid" <?php echo $filter_status === 'paid' ? 'selected' : ''; ?>>Paid</option>
+        <option value="unpaid" <?php echo $filter_status === 'unpaid' ? 'selected' : ''; ?>>Unpaid</option>
+    </select>
+
+    <label for="search_query">Search:</label>
+    <input type="text" name="search_query" id="search_query" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search by Order ID or Name">
+
+    <button type="submit">Apply</button>
+</form>
 
 <table>
   <thead>
@@ -117,7 +148,7 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
 <div style="margin-top: 20px;">
   <!-- Pagination Links -->
   <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-      <a href="?page=<?php echo $i; ?>" 
+      <a href="?page=<?php echo $i; ?>&filter_status=<?php echo $filter_status; ?>&search_query=<?php echo urlencode($search_query); ?>" 
          style="margin-right: 5px; <?php echo $i === $page ? 'font-weight: bold;' : ''; ?>">
          <?php echo $i; ?>
       </a>
