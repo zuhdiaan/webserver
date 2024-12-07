@@ -107,12 +107,12 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
 ?>
 
 <form method="GET" style="margin-bottom: 20px;">
-    <label for="filter_status">Filter by Payment Status:</label>
+    <!-- <label for="filter_status">Filter by Payment Status:</label>
     <select name="filter_status" id="filter_status">
         <option value="">All</option>
         <option value="paid" <?php echo $filter_status === 'paid' ? 'selected' : ''; ?>>Paid</option>
         <option value="not paid" <?php echo $filter_status === 'not paid' ? 'selected' : ''; ?>>Unpaid</option>
-    </select>
+    </select> -->
 
     <label for="search_query">Search:</label>
     <input type="text" name="search_query" id="search_query" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search by Order ID or Name">
