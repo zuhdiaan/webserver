@@ -124,6 +124,39 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
     <input type="date" name="end_date" id="end_date" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : ''; ?>">
 
     <button type="submit">Apply</button>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+
+        // When the start date changes
+        startDateInput.addEventListener('change', () => {
+            const startDateValue = startDateInput.value;
+            if (startDateValue) {
+                // Set the minimum value for the end date to the selected start date
+                endDateInput.min = startDateValue;
+
+                // If end date is earlier than start date, clear the end date
+                if (endDateInput.value && endDateInput.value < startDateValue) {
+                    endDateInput.value = startDateValue;
+                }
+            }
+        });
+
+        // When the end date changes
+        endDateInput.addEventListener('change', () => {
+            const endDateValue = endDateInput.value;
+            if (endDateValue) {
+                // Ensure the end date is not earlier than the start date
+                if (startDateInput.value && endDateValue < startDateInput.value) {
+                    alert('End Date cannot be earlier than Start Date.');
+                    endDateInput.value = startDateInput.value;
+                }
+            }
+        });
+    });
+</script>
 </form>
 
 <table>
