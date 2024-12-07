@@ -21,8 +21,17 @@ if ($_SESSION['role'] === 'owner') {
 // Get filter and search parameters
 $filter_status = isset($_GET['filter_status']) ? $_GET['filter_status'] : '';
 $search_query = isset($_GET['search_query']) ? $_GET['search_query'] : '';
-$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
-$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
+$date_range = isset($_GET['date_range']) ? $_GET['date_range'] : '';
+
+// Parse date range into start and end dates
+if ($date_range) {
+    $dates = explode(' to ', $date_range); // Flatpickr returns "start to end" format
+    $start_date = $dates[0] ?? '';
+    $end_date = $dates[1] ?? '';
+} else {
+    $start_date = '';
+    $end_date = '';
+}
 
 // Pagination setup
 $items_per_page = 10; // Number of items per page
@@ -107,56 +116,13 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
 ?>
 
 <form method="GET" style="margin-bottom: 20px;">
-    <!-- <label for="filter_status">Filter by Payment Status:</label>
-    <select name="filter_status" id="filter_status">
-        <option value="">All</option>
-        <option value="paid" <?php echo $filter_status === 'paid' ? 'selected' : ''; ?>>Paid</option>
-        <option value="not paid" <?php echo $filter_status === 'not paid' ? 'selected' : ''; ?>>Unpaid</option>
-    </select> -->
+    <label for="date_range">Date Range:</label>
+    <input type="text" id="date_range" name="date_range" placeholder="Select date range" value="<?php echo htmlspecialchars($date_range); ?>">
 
     <label for="search_query">Search:</label>
     <input type="text" name="search_query" id="search_query" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search by Order ID or Name">
 
-    <label for="start_date">Start Date:</label>
-    <input type="date" name="start_date" id="start_date" value="<?php echo isset($_GET['start_date']) ? $_GET['start_date'] : ''; ?>">
-
-    <label for="end_date">End Date:</label>
-    <input type="date" name="end_date" id="end_date" value="<?php echo isset($_GET['end_date']) ? $_GET['end_date'] : ''; ?>">
-
     <button type="submit">Apply</button>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const startDateInput = document.getElementById('start_date');
-        const endDateInput = document.getElementById('end_date');
-
-        // When the start date changes
-        startDateInput.addEventListener('change', () => {
-            const startDateValue = startDateInput.value;
-            if (startDateValue) {
-                // Set the minimum value for the end date to the selected start date
-                endDateInput.min = startDateValue;
-
-                // If end date is earlier than start date, clear the end date
-                if (endDateInput.value && endDateInput.value < startDateValue) {
-                    endDateInput.value = startDateValue;
-                }
-            }
-        });
-
-        // When the end date changes
-        endDateInput.addEventListener('change', () => {
-            const endDateValue = endDateInput.value;
-            if (endDateValue) {
-                // Ensure the end date is not earlier than the start date
-                if (startDateInput.value && endDateValue < startDateInput.value) {
-                    alert('End Date cannot be earlier than Start Date.');
-                    endDateInput.value = startDateInput.value;
-                }
-            }
-        });
-    });
-</script>
 </form>
 
 <table>
@@ -224,6 +190,19 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
 function exportToExcel() {
     window.location.href = 'http://localhost:3000/api/exportOrders'; // Call the API to export to Excel
 }
+
+// Flatpickr Integration
+document.addEventListener('DOMContentLoaded', () => {
+    flatpickr('#date_range', {
+        mode: 'range',
+        dateFormat: 'Y-m-d',
+        defaultDate: <?php echo json_encode($date_range ? explode(' to ', $date_range) : []); ?>
+    });
+});
 </script>
+
+<!-- Flatpickr CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <?php include 'templates/footer.php'; ?>
