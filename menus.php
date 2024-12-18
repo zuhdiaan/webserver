@@ -15,17 +15,6 @@
   </thead>
   <tbody>
     <?php
-    // Fetch all categories
-    $categories_json = @file_get_contents('http://localhost:3000/api/categories');
-    $categories = $categories_json ? json_decode($categories_json, true) : [];
-    $categoryMap = [];
-
-    if ($categories !== NULL) {
-      foreach ($categories as $category) {
-        $categoryMap[$category['category_id']] = $category['category_name'];
-      }
-    }
-
     // Fetch all menu items
     $json = @file_get_contents('http://localhost:3000/api/menu_items');
     if ($json !== FALSE) {
@@ -33,9 +22,7 @@
 
       if ($menus !== NULL) {
         foreach ($menus as $menu) {
-          $category_name = isset($categoryMap[$menu['category_id']])
-            ? htmlspecialchars($categoryMap[$menu['category_id']])
-            : 'Unknown';
+          $category_name = htmlspecialchars($menu['category']);  // Category now directly from ENUM
           $isActive = $menu['is_active'] ? 'checked' : '';
 
           echo "<tr>
@@ -57,7 +44,7 @@
                             data-id='" . htmlspecialchars($menu['item_id']) . "' 
                             data-name='" . htmlspecialchars($menu['item_name']) . "' 
                             data-price='" . htmlspecialchars($menu['price']) . "' 
-                            data-category='" . htmlspecialchars($menu['category_id']) . "'>
+                            data-category='" . htmlspecialchars($menu['category']) . "'> <!-- Category directly from ENUM -->
                       Edit
                     </button>
                     <button class='delete-menu' data-id='" . htmlspecialchars($menu['item_id']) . "'>
@@ -73,8 +60,7 @@
 </table>
 
 <!-- Edit Modal -->
-<div id="editModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-  background-color:white; padding:20px; border-radius:8px; box-shadow:0px 0px 15px rgba(0, 0, 0, 0.1);">
+<div id="editModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:8px; box-shadow:0px 0px 15px rgba(0, 0, 0, 0.1);">
   <h2>Edit Menu</h2>
   <form id="editForm">
     <label for="editName">Name:</label>
@@ -85,16 +71,14 @@
 
     <label for="editCategory">Category:</label>
     <select id="editCategory">
-  <?php
-  foreach ($categories as $category) {
-    echo "<option value='{$category['category_id']}'>" . 
-         htmlspecialchars($category['category_name']) . "</option>";
-  }
-  ?>
-</select><br><br>
+      <option value="Coffee">Coffee</option>
+      <option value="Non-Coffee">Non-Coffee</option>
+      <option value="Eat-ables">Eat-ables</option>
+    </select><br><br>
+
     <label for="editImage">Image:</label>
     <input type="file" id="editImage" name="image"><br><br>
-    </input>
+    
     <button type="submit">Save Changes</button>
     <button type="button" onclick="closeModal()">Cancel</button>
   </form>
@@ -113,106 +97,81 @@
     let currentItemId;
 
     // Handle Edit Button Click
-    // Handle Edit Button Click
-document.querySelectorAll('.edit-menu').forEach(button => {
-  button.addEventListener('click', () => {
-    currentItemId = button.getAttribute('data-id');
-    const currentName = button.getAttribute('data-name');
-    const currentPrice = button.getAttribute('data-price');
-    const currentCategory = button.getAttribute('data-category'); // Category ID
+    document.querySelectorAll('.edit-menu').forEach(button => {
+      button.addEventListener('click', () => {
+        currentItemId = button.getAttribute('data-id');
+        const currentName = button.getAttribute('data-name');
+        const currentPrice = button.getAttribute('data-price');
+        const currentCategory = button.getAttribute('data-category'); // Category from ENUM
 
-    // Pre-fill form fields
-    document.getElementById('editName').value = currentName;
-    document.getElementById('editPrice').value = currentPrice;
+        // Pre-fill form fields
+        document.getElementById('editName').value = currentName;
+        document.getElementById('editPrice').value = currentPrice;
 
-    // Set the correct category as selected
-    const editCategorySelect = document.getElementById('editCategory');
-    for (let option of editCategorySelect.options) {
-      if (option.value === currentCategory) {
-        option.selected = true;
-        break;
-      }
-    }
+        // Set the correct category as selected
+        const editCategorySelect = document.getElementById('editCategory');
+        for (let option of editCategorySelect.options) {
+          if (option.value === currentCategory) {
+            option.selected = true;
+            break;
+          }
+        }
 
-    openModal();
-  });
-});
+        openModal();
+      });
+    });
 
     // Handle Form Submission
     document.getElementById('editForm').addEventListener('submit', (event) => {
-  event.preventDefault();
+      event.preventDefault();
 
-  const newName = document.getElementById('editName').value;
-  const newPrice = parseFloat(document.getElementById('editPrice').value);
-  const newCategory = document.getElementById('editCategory').value; // Get category_id
+      const newName = document.getElementById('editName').value;
+      const newPrice = parseFloat(document.getElementById('editPrice').value);
+      const newCategory = document.getElementById('editCategory').value; // Get category
 
-  fetch(`http://localhost:3000/api/menu_items/${currentItemId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      item_name: newName,
-      price: newPrice,
-      category_id: newCategory // Ensure category_id is sent
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert(data.message || 'Menu updated successfully');
-    location.reload();
-  })
-  .catch(error => console.error('Error updating menu:', error));
-
-  closeModal();
-});
-
-// Handle Delete Button Click
-document.querySelectorAll('.delete-menu').forEach(button => {
-  button.addEventListener('click', () => {
-    const itemId = button.getAttribute('data-id');
-    if (confirm('Are you sure you want to delete this menu item?')) {
-      fetch(`http://localhost:3000/api/menu_items/${itemId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
+      fetch(`http://localhost:3000/api/menu_items/${currentItemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          item_name: newName,
+          price: newPrice,
+          category: newCategory // Send category directly
+        })
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to delete item with ID ${itemId}`);
-        }
-        // Try to parse the response if there is a body, otherwise return an empty object
-        return response.json().catch(() => ({}));
-      })
+      .then(response => response.json())
       .then(data => {
-        alert(data.message || 'Menu item deleted successfully');
+        alert(data.message || 'Menu updated successfully');
         location.reload();
       })
-      .catch(error => {
-        console.error('Error deleting menu item:', error);
-        alert('Failed to delete menu item. Please try again.');
-      });
-    }
-  });
-});
+      .catch(error => console.error('Error updating menu:', error));
 
-    // Handle Update Button Click for Availability
-    document.querySelectorAll('.update-availability').forEach(button => {
-      button.addEventListener('click', (event) => {
-        const form = event.target.closest('.availability-form');
-        const itemId = form.getAttribute('data-id');
-        const isActive = form.querySelector('.availability-toggle').checked;
+      closeModal();
+    });
 
-        fetch(`http://localhost:3000/api/menu_items/${itemId}/availability`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ is_active: isActive })
-        })
-        .then(response => response.json())
-        .then(data => {
-          alert(data.message || 'Availability updated successfully');
-        })
-        .catch(error => {
-          console.error('Error updating availability:', error);
-          alert('Failed to update availability. Please try again.');
-        });
+    // Handle Delete Button Click
+    document.querySelectorAll('.delete-menu').forEach(button => {
+      button.addEventListener('click', () => {
+        const itemId = button.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this menu item?')) {
+          fetch(`http://localhost:3000/api/menu_items/${itemId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to delete item with ID ${itemId}`);
+            }
+            return response.json().catch(() => ({}));
+          })
+          .then(data => {
+            alert(data.message || 'Menu item deleted successfully');
+            location.reload();
+          })
+          .catch(error => {
+            console.error('Error deleting menu item:', error);
+            alert('Failed to delete menu item. Please try again.');
+          });
+        }
       });
     });
   });
