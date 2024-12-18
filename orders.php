@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Check if the user is logged in and is an admin
-if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'barista') {
     // Redirect to the login page or show an error message
     header("Location: login.php"); // Redirect to the login page
     exit();

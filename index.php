@@ -28,9 +28,9 @@ $role = $_SESSION['role'];
       <h2>Welcome to Jiwani Coffee Web Server</h2>
       <p>Manage your cafe orders and menus.</p>
 
-      <?php if ($role === 'admin'): ?>
+      <?php if ($role === 'barista'): ?>
           <h3>Barista Dashboard</h3>
-          <p>Here you can manage users, view reports, and adjust settings.</p>
+          <p>Here you can manage orders, view reports, and adjust settings.</p>
           <!-- Add more admin-specific functionality here -->
       <?php elseif ($role === 'owner'): ?>
           <h3>Owner Dashboard</h3>

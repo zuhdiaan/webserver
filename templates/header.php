@@ -23,7 +23,7 @@ if ($current_page === 'login.php') {
       $role = isset($_SESSION['role']) ? $_SESSION['role'] : null;
 
       // Define menu items based on user role
-      if ($role === 'admin') {
+      if ($role === 'barista') {
           // Admin can see all options except Manage Users and Settings
           $navLinks = array(
               "Home" => "index.php",

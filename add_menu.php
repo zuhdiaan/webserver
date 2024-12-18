@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Check if the user is logged in and is an admin
-if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'barista') {
     header("Location: login.php");
     exit();
 }
@@ -29,17 +29,10 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'admin') {
     <label for="category">Category:</label>
     <select id="category" name="category" required class="input-field">
         <?php
-        $client = new Client();
-        try {
-            $response = $client->get('http://localhost:3000/api/categories');
-            $categories = json_decode($response->getBody(), true);
-            foreach ($categories as $category) {
-                echo "<option value=\"" . htmlspecialchars($category['category_id']) . "\">" . htmlspecialchars($category['category_name']) . "</option>";
-            }
-        } catch (RequestException $e) {
-            echo "<option value=\"\">Failed to load categories</option>";
-        } catch (Exception $e) {
-            echo "<option value=\"\">Error: " . htmlspecialchars($e->getMessage()) . "</option>";
+        // Hardcoding the category values since it's now an ENUM in the 'menu_items' table
+        $categories = ['Coffee', 'Non-Coffee', 'Eat-ables'];
+        foreach ($categories as $category) {
+            echo "<option value=\"" . htmlspecialchars($category) . "\">" . htmlspecialchars($category) . "</option>";
         }
         ?>
     </select>
@@ -96,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'contents' => $price
             ],
             [
-                'name'     => 'category_id',
+                'name'     => 'category',  // Update to 'category' as it's no longer 'category_id'
                 'contents' => $category
             ]
         ]
