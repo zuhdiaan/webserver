@@ -77,7 +77,7 @@
     </select><br><br>
 
     <label for="editImage">Image:</label>
-    <input type="file" id="editImage" name="image"><br><br>
+    <input type="file" id="editImage" name="image" accept="image/*"><br><br>
     
     <button type="submit">Save Changes</button>
     <button type="button" onclick="closeModal()">Cancel</button>
@@ -121,34 +121,37 @@
       });
     });
 
-    // Handle Form Submission
     document.getElementById('editForm').addEventListener('submit', (event) => {
-      event.preventDefault();
+  event.preventDefault();
 
-      const newName = document.getElementById('editName').value;
-      const newPrice = parseFloat(document.getElementById('editPrice').value);
-      const newCategory = document.getElementById('editCategory').value; // Get category
+  const formData = new FormData();
+  const newName = document.getElementById('editName').value;
+  const newPrice = parseFloat(document.getElementById('editPrice').value);
+  const newCategory = document.getElementById('editCategory').value;
+  const newImage = document.getElementById('editImage').files[0]; // Get new image file
 
-      fetch(`http://localhost:3000/api/menu_items/${currentItemId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          item_name: newName,
-          price: newPrice,
-          category: newCategory // Send category directly
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.message || 'Menu updated successfully');
-        location.reload();
-      })
-      .catch(error => console.error('Error updating menu:', error));
+  formData.append('item_name', newName);
+  formData.append('price', newPrice);
+  formData.append('category', newCategory);
+  if (newImage) {
+    formData.append('avatar', newImage); // Include the new image file if uploaded
+  }
 
-      closeModal();
-    });
+  fetch(`http://localhost:3000/api/menu_items/${currentItemId}`, {
+    method: 'PUT',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert(data.message || 'Menu updated successfully');
+    location.reload();
+  })
+  .catch(error => console.error('Error updating menu:', error));
 
-    // Handle Delete Button Click
+  closeModal();
+});
+
+// Handle Delete Button Click
     document.querySelectorAll('.delete-menu').forEach(button => {
       button.addEventListener('click', () => {
         const itemId = button.getAttribute('data-id');
