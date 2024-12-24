@@ -120,6 +120,9 @@ function updateOrderStatus(orderId, status) {
   .then(data => {
     console.log('Response:', data);
     location.reload();  // Optionally refresh the page after update
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
 }
 

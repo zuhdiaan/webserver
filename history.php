@@ -38,7 +38,7 @@ $items_per_page = 10; // Number of items per page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start_index = ($page - 1) * $items_per_page;
 
-$json = file_get_contents('http://localhost:3000/api/order?status=completed');
+$json = file_get_contents('http://localhost:3000/api/history');
 $orders = json_decode($json, true);
 
 if ($filter_status) {
