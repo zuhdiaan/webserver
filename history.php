@@ -41,6 +41,12 @@ $start_index = ($page - 1) * $items_per_page;
 $json = file_get_contents('http://localhost:3000/api/history');
 $orders = json_decode($json, true);
 
+if ($orders === null) {
+    echo "<p>Error fetching order history. Please try again later.</p>";
+    error_log("Error decoding JSON response from API.");
+    exit();
+}
+
 if ($filter_status) {
     $orders = array_filter($orders, function($order) use ($filter_status) {
         return isset($order['payment_status']) && 
@@ -56,13 +62,13 @@ if ($search_query) {
 
 if ($start_date || $end_date) {
     $orders = array_filter($orders, function ($order) use ($start_date, $end_date) {
-        if (empty($order['order_time'])) { // Ensure order_time is used if order_date is missing
-            error_log("Missing order_time for Order ID: {$order['order_id']}");
+        if (empty($order['order_date'])) { // Ensure order_date is used
+            error_log("Missing order_date for Order ID: {$order['order_id']}");
             return false; // Skip this order
         }
         
         try {
-            $order_date = new DateTime($order['order_time']); // Use correct date field
+            $order_date = new DateTime($order['order_date']); // Use correct date field
             $start_date_time = $start_date ? new DateTime($start_date . ' 00:00:00') : null;
             $end_date_time = $end_date ? new DateTime($end_date . ' 23:59:59') : null;
 
@@ -79,23 +85,24 @@ if ($start_date || $end_date) {
 $grouped_orders = [];
 
 foreach ($orders as $order) {
-    $order_key = $order['order_id'];
+    $order_key = $order['order_history_id']; // Use order_history_id as the grouping key
     if (!isset($grouped_orders[$order_key])) {
         $grouped_orders[$order_key] = [
+            'order_history_id' => $order['order_history_id'],
             'order_id' => $order['order_id'],
-            'order_date' => date('Y-m-d H:i:s', strtotime($order['order_time'])),
+            'order_date' => date('Y-m-d H:i:s', strtotime($order['order_date'])),
             'user_name' => $order['user_name'],
             'items' => [],
             'total_price' => 0,
             'payment_status' => $order['payment_status'],
-            'table_number' => $order['table_number'],
+            'table' => $order['table'],
             'payment_method' => $order['payment_method']
         ];
     }
 
     $items = explode(',', $order['items']);
     foreach ($items as $item) {
-        list($item_id, $item_name, $item_amount, $item_total_price) = explode(':', $item);
+        list($item_name, $item_amount, $item_total_price) = explode(':', $item);
 
         $grouped_orders[$order_key]['items'][] = [
             'name' => $item_name,
@@ -128,6 +135,7 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
 <table>
   <thead>
     <tr>
+      <th>Order History ID</th>
       <th>Order ID</th>
       <th>Order Date</th>
       <th>User Name</th>
@@ -136,17 +144,18 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
       <th>Item Total Price</th>
       <th>Total Price</th>
       <th>Payment Status</th>
-      <th>Table Number</th>
+      <th>Table</th>
       <th>Payment Method</th>
     </tr>
   </thead>
   <tbody>
     <?php
     if (empty($grouped_orders)) {
-        echo "<tr><td colspan='10'>No orders found matching the selected criteria.</td></tr>";
+        echo "<tr><td colspan='11'>No orders found matching the selected criteria.</td></tr>";
     } else {
         foreach ($grouped_orders as $grouped_order) {
             echo "<tr>
+                    <td>{$grouped_order['order_history_id']}</td>
                     <td>{$grouped_order['order_id']}</td>
                     <td>{$grouped_order['order_date']}</td>
                     <td>{$grouped_order['user_name']}</td>
@@ -167,7 +176,7 @@ $grouped_orders = array_slice($grouped_orders, $start_index, $items_per_page);
             echo "</td>
                   <td>Rp. " . number_format($grouped_order['total_price'], 2) . "</td>
                   <td>{$grouped_order['payment_status']}</td>
-                  <td>{$grouped_order['table_number']}</td>
+                  <td>{$grouped_order['table']}</td>
                   <td>{$grouped_order['payment_method']}</td>
                   </tr>";
         }
