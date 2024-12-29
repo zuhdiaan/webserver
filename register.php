@@ -1,6 +1,11 @@
 <?php
 session_start(); // Start a session
 
+if (isset($_GET['logout'])) {
+    session_destroy(); // Hapus semua data sesi
+    header("Location: login.php"); // Redirect ke halaman login
+    exit();
+}
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name']; // Retrieve name from the form

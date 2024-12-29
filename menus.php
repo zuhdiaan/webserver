@@ -1,4 +1,27 @@
-<?php include 'templates/header.php'; ?>
+<?php 
+session_start(); // Start the session
+
+// Check if the user is logged in
+if (!isset($_SESSION['member_id'])) {
+    header("Location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+// Check if the user is a barista
+if ($_SESSION['role'] !== 'barista') {
+    header("Location: unauthorized.php"); // Redirect to an unauthorized access page if not a barista
+    exit();
+}
+
+// Logout logic
+if (isset($_GET['logout'])) {
+    session_destroy(); // Hapus semua data sesi
+    header("Location: login.php"); // Redirect ke halaman login
+    exit();
+}
+
+include 'templates/header.php'; 
+?>
 
 <h2>Menus</h2>
 <table>

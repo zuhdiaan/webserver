@@ -16,6 +16,12 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'barista') {
     header("Location: login.php");
     exit();
 }
+
+if (isset($_GET['logout'])) {
+    session_destroy(); // Hapus semua data sesi
+    header("Location: login.php"); // Redirect ke halaman login
+    exit();
+}
 ?>
 
 <h2>Add New Menu</h2>

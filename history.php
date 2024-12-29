@@ -1,6 +1,11 @@
 <?php 
 session_start(); // Start the session
 
+if (isset($_GET['logout'])) {
+    session_destroy(); // Hapus semua data sesi
+    header("Location: login.php"); // Redirect ke halaman login
+    exit();
+}
 // Check if the user is logged in
 if (!isset($_SESSION['member_id'])) {
     header("Location: login.php"); // Redirect to login page if not logged in

@@ -12,6 +12,12 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'barista') {
     header("Location: login.php"); // Redirect to the login page
     exit();
 }
+
+if (isset($_GET['logout'])) {
+  session_destroy(); // Hapus semua data sesi
+  header("Location: login.php"); // Redirect ke halaman login
+  exit();
+}
 ?>
 
 <body>

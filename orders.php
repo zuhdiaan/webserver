@@ -4,6 +4,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+if (isset($_GET['logout'])) {
+  session_destroy(); // Hapus semua data sesi
+  header("Location: login.php"); // Redirect ke halaman login
+  exit();
+}
 // Check if the user is logged in and is an admin
 if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'barista') {
     // Redirect to the login page or show an error message
@@ -140,5 +145,6 @@ function cancelOrder(orderId) {
     location.reload();  // Optionally refresh the page after cancellation
   });
 }
+
 </script>
 <!-- <?php include 'templates/footer.php'; ?> -->

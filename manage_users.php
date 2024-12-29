@@ -8,6 +8,12 @@ if (!isset($_SESSION['member_id']) || $_SESSION['role'] !== 'owner') {
     exit();
 }
 
+if (isset($_GET['logout'])) {
+    session_destroy(); // Hapus semua data sesi
+    header("Location: login.php"); // Redirect ke halaman login
+    exit();
+}
+
 require 'vendor/autoload.php';
 use GuzzleHttp\Client;
 
